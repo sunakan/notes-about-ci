@@ -1,17 +1,13 @@
 ---
 version: 2.1
 
-#orbs:
-#  hello: sunakan/hello-world@0.0.2
-
 jobs:
-  myjob:
+  build:
     docker:
       - image: "circleci/node:dubnium-stretch"
     steps:
       - echo-hello:
-        to: "こんにちは世界"
-
+          to: "こんにちは世界"
 
 commands:
   echo-hello:
@@ -21,4 +17,6 @@ commands:
         type: string
         default: "Hello World"
     steps:
-      - run: echo << parameters.to >>
+      - run:
+          name: "echoするだけ"
+          command: echo << parameters.to >>

@@ -3,3 +3,17 @@
 image:https://img.shields.io/badge/license-MIT-blue.svg[MIT, link="https://opensource.org/licenses/MIT"]
 
 image:https://circleci.com/gh/sunakan/notes-about-ci/tree/master.svg?style=shield["CircleCI", link="https://circleci.com/gh/sunakan/notes-about-ci/tree/master"]
+
+== CircleCI
+* localでの実行方法(もしconfig.ymlが2.1なら2.0版にしないと実行できない(対応待ち))
++
+----
+$ circleci local execute
+Error:
+You attempted to run a local build with version '2.1' of configuration.
+Local builds do not support that version at this time.
+You can use 'circleci config process' to pre-process your config into a version that local builds can run (see 'circleci help config process' for more information)
+
+$ circleci config process .circleci/config.yml > .circleci/config-2.0.yml
+$ circleci local execute -c .circleci/config-2.0.yml
+----
