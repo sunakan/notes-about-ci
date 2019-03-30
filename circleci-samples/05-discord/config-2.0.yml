@@ -1,0 +1,157 @@
+version: 2
+jobs:
+  feature:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install
+        command: sudo apt-get install -y curl jq
+    - run:
+        name: echo
+        command: echo こんにちはFEATURE世界
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST --connect-timeout 5 -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_JOB}] こんにちは世界\"}" ${DISCORD_WEBHOOK}
+  develop:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install
+        command: sudo apt-get install -y curl jq
+    - run:
+        name: echo
+        command: echo こんにちはDEVELOP世界
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST --connect-timeout 5 -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_JOB}] こんにちは世界\"}" ${DISCORD_WEBHOOK}
+  staging:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install
+        command: sudo apt-get install -y curl jq
+    - run:
+        name: echo
+        command: echo こんにちはSTAGING世界
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST --connect-timeout 5 -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_JOB}] こんにちは世界\"}" ${DISCORD_WEBHOOK}
+  master:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install
+        command: sudo apt-get install -y curl jq
+    - run:
+        name: echo
+        command: echo こんにちはMASTER世界
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST --connect-timeout 5 -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_JOB}] こんにちは世界\"}" ${DISCORD_WEBHOOK}
+workflows:
+  build:
+    jobs:
+    - feature
+    - develop
+    - staging
+    - master
+  version: 2
+
+# Original config.yml file:
+# ---
+# version: 2.1
+# 
+# executors:
+#   node:
+#     parameters:
+#       tag:
+#         type: string
+#         default: \"lts\"
+#     docker:
+#       - image: circleci/node:<< parameters.tag >>
+# 
+# commands:
+#   echo-hello:
+#     description: \"CircleCI\u306E\u7D50\u679C\u306B\u51FA\u529B\"
+#     parameters:
+#       message:
+#         type: string
+#         default: \"Hello World\"
+#     steps:
+#       - run:
+#           name: \"echo\"
+#           command: echo << parameters.message >>
+#   apt-get-setup:
+#     description: \"apt-get update\u3068\u5FC5\u8981\u306A\u30D1\u30C3\u30B1\u30FC\u30B8\u3092install\"
+#     steps:
+#       - run:
+#           name: \"apt-get update\"
+#           command: sudo apt-get update
+#       - run:
+#           name: \"apt-get install\"
+#           command: sudo apt-get install -y curl jq
+#   notify-discord:
+#     description: \"Discord\u3078\u901A\u77E5\u3059\u308B\"
+#     parameters:
+#       webhook:
+#         type: string
+#         default: ${DISCORD_WEBHOOK}
+#       message:
+#         type: string
+#         default: \"PING PONG\"
+#     steps:
+#       - run:
+#           name: \"Discord\u3078\u901A\u77E5\"
+#           command: |
+#             curl -X POST --connect-timeout 5 -H \"Content-Type:application/json\" -d \"{\\\"content\\\": \\\"<< parameters.message >>\\\"}\" << parameters.webhook >>
+# 
+# jobs:
+#   job:
+#     parameters:
+#       message:
+#         type: string
+#         default: \"\u3053\u3093\u306B\u3061\u306F\u4E16\u754C\"
+#     executor:
+#       name: node
+#     steps:
+#       - apt-get-setup
+#       - echo-hello:
+#           message: \"\u3053\u3093\u306B\u3061\u306F<< parameters.message >>\u4E16\u754C\"
+#       - notify-discord:
+#           message: \"[${CIRCLE_JOB}] \u3053\u3093\u306B\u3061\u306F\u4E16\u754C\"
+# 
+# workflows:
+#   build:
+#     jobs:
+#       - job:
+#           name: \"feature\"
+#           message: \"FEATURE\"
+#       - job:
+#           name: \"develop\"
+#           message: \"DEVELOP\"
+#       - job:
+#           name: \"staging\"
+#           message: \"STAGING\"
+#       - job:
+#           name: \"master\"
+#           message: \"MASTER\"

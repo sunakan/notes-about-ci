@@ -1,0 +1,77 @@
+---
+version: 2.1
+
+executors:
+  node:
+    parameters:
+      tag:
+        type: string
+        default: "lts"
+    docker:
+      - image: circleci/node:<< parameters.tag >>
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      message:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "echo"
+          command: echo << parameters.message >>
+  apt-get-setup:
+    description: "apt-get updateと必要なパッケージをinstall"
+    steps:
+      - run:
+          name: "apt-get update"
+          command: sudo apt-get update
+      - run:
+          name: "apt-get install"
+          command: sudo apt-get install -y curl jq
+  notify-discord:
+    description: "Discordへ通知する"
+    parameters:
+      webhook:
+        type: string
+        default: ${DISCORD_WEBHOOK}
+      message:
+        type: string
+        default: "PING PONG"
+    steps:
+      - run:
+          name: "Discordへ通知"
+          command: |
+            curl -X POST --connect-timeout 5 -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" << parameters.webhook >>
+
+jobs:
+  job:
+    parameters:
+      message:
+        type: string
+        default: "こんにちは世界"
+    executor:
+      name: node
+    steps:
+      - apt-get-setup
+      - echo-hello:
+          message: "こんにちは<< parameters.message >>世界"
+      - notify-discord:
+          message: "[${CIRCLE_BRANCH}] OK"
+
+workflows:
+  build:
+    jobs:
+      - job:
+          name: "feature"
+          message: "FEATURE"
+      - job:
+          name: "develop"
+          message: "DEVELOP"
+      - job:
+          name: "staging"
+          message: "STAGING"
+      - job:
+          name: "master"
+          message: "MASTER"
