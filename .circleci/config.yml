@@ -58,6 +58,8 @@ jobs:
         type: boolean
       run_unittest:
         type: boolean
+      run_build:
+        type: boolean
     executor:
       name: node
     steps:
@@ -79,7 +81,7 @@ jobs:
             - echo-hello:
                 message: "[$CIRCLE_BRANCH] テストレポートとカバレッジレポート"
       - when:
-          condition: << parameters.run_unittest >>
+          condition: << parameters.run_build >>
           steps:
             - echo-hello:
                 message: "[$CIRCLE_BRANCH] 何かをビルド"
@@ -90,24 +92,40 @@ workflows:
   build:
     jobs:
       - job:
+          filters:
+            branches:
+              only:
+                - /feature\/.*/
           name: "feature"
           message: "FEATURE"
           run_textlint: true
           run_unittest: true
           run_build: false
       - job:
+          filters:
+            branches:
+              only:
+                - develop
           name: "develop"
           message: "DEVELOP"
           run_textlint: false
           run_unittest: true
           run_build: true
       - job:
+          filters:
+            branches:
+              only:
+                - staging
           name: "staging"
           message: "STAGING"
           run_textlint: false
           run_unittest: true
           run_build: true
       - job:
+          filters:
+            branches:
+              only:
+                - master
           name: "master"
           message: "MASTER"
           run_textlint: false
