@@ -9,6 +9,8 @@ executors:
         default: "lts"
     docker:
       - image: circleci/node:<< parameters.tag >>
+    environment:
+      DISCORD_WEBHOOK: ${DISCORD_WEBHOOK}
 
 commands:
   echo-hello:
@@ -21,6 +23,29 @@ commands:
       - run:
           name: "echo"
           command: echo << parameters.message >>
+  apt-get-setup:
+    description: "apt-get updateと必要なパッケージをinstall"
+    steps:
+      - run:
+          name: "apt-get update"
+          command: sudo apt-get update
+      - run:
+          name: "apt-get install"
+          command: sudo apt-get install -y curl jq
+  notify-discord:
+    description: "Discordへ通知する"
+    parameters:
+      webhook:
+        type: string
+        default: ${DISCORD_WEBHOOK}
+      message:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "Discordへ通知"
+          command: |
+            curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" "<< parameters.webhook >>"
 
 jobs:
   job:
@@ -31,8 +56,10 @@ jobs:
     executor:
       name: node
     steps:
+      - apt-get-setup
       - echo-hello:
           message: "こんにちは<< parameters.message >>世界"
+      - notify-discord
 
 workflows:
   build:
