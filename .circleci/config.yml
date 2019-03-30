@@ -3,11 +3,21 @@ version: 2.1
 
 jobs:
   build:
-    docker:
-      - image: "circleci/node:dubnium-stretch"
+    executor:
+      name: node
+      tag: "10"
     steps:
       - echo-hello:
           to: "こんにちは世界"
+
+executors:
+  node:
+    parameters:
+      tag:
+        type: string
+        default: "lts"
+    docker:
+      - image: circleci/node:<< parameters.tag >>
 
 commands:
   echo-hello:
