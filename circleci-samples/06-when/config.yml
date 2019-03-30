@@ -1,0 +1,115 @@
+---
+version: 2.1
+
+executors:
+  node:
+    parameters:
+      tag:
+        type: string
+        default: "lts"
+    docker:
+      - image: circleci/node:<< parameters.tag >>
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      message:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "echo"
+          command: echo << parameters.message >>
+  apt-get-setup:
+    description: "apt-get updateと必要なパッケージをinstall"
+    steps:
+      - run:
+          name: "apt-get update"
+          command: sudo apt-get update
+      - run:
+          name: "apt-get install -y curl"
+          command: sudo apt-get install -y curl
+  notify-discord:
+    description: "Discordへ通知する"
+    parameters:
+      webhook:
+        type: string
+        default: ${DISCORD_WEBHOOK}
+      message:
+        type: string
+        default: "[${CIRCLE_BRANCH}] こんにちは世界"
+      timeout:
+        type: integer
+        default: 5
+    steps:
+      - run:
+          name: "Discordへ通知"
+          command: |
+            curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+
+jobs:
+  job:
+    parameters:
+      message:
+        type: string
+        default: "こんにちは世界"
+      run_textlint:
+        type: boolean
+      run_unittest:
+        type: boolean
+    executor:
+      name: node
+    steps:
+      - apt-get-setup
+      - echo-hello:
+          message: "こんにちは、<< parameters.message >>世界"
+      - when:
+          condition: << parameters.run_textlint >>
+          steps:
+            - echo-hello:
+                message: "[$CIRCLE_BRANCH] textlint"
+            - echo-hello:
+                message: "[$CIRCLE_BRANCH] reviewdogでコミットに書き込みたい"
+      - when:
+          condition: << parameters.run_unittest >>
+          steps:
+            - echo-hello:
+                message: "[$CIRCLE_BRANCH] UnitTest"
+            - echo-hello:
+                message: "[$CIRCLE_BRANCH] テストレポートとカバレッジレポート"
+      - when:
+          condition: << parameters.run_unittest >>
+          steps:
+            - echo-hello:
+                message: "[$CIRCLE_BRANCH] 何かをビルド"
+      - notify-discord:
+          message: "[${CIRCLE_BRANCH}] OK"
+
+workflows:
+  build:
+    jobs:
+      - job:
+          name: "feature"
+          message: "FEATURE"
+          run_textlint: true
+          run_unittest: true
+          run_build: false
+      - job:
+          name: "develop"
+          message: "DEVELOP"
+          run_textlint: false
+          run_unittest: true
+          run_build: true
+      - job:
+          name: "staging"
+          message: "STAGING"
+          run_textlint: false
+          run_unittest: true
+          run_build: true
+      - job:
+          name: "master"
+          message: "MASTER"
+          run_textlint: false
+          run_unittest: false
+          run_build: true

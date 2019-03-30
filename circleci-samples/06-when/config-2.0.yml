@@ -1,0 +1,210 @@
+version: 2
+jobs:
+  feature:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install -y curl
+        command: sudo apt-get install -y curl
+    - run:
+        name: echo
+        command: echo こんにちは、FEATURE世界
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] textlint
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] reviewdogでコミットに書き込みたい
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] UnitTest
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] テストレポートとカバレッジレポート
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_BRANCH}] OK\"}" --connect-timeout 5 ${DISCORD_WEBHOOK}
+  develop:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install -y curl
+        command: sudo apt-get install -y curl
+    - run:
+        name: echo
+        command: echo こんにちは、DEVELOP世界
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] UnitTest
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] テストレポートとカバレッジレポート
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_BRANCH}] OK\"}" --connect-timeout 5 ${DISCORD_WEBHOOK}
+  staging:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install -y curl
+        command: sudo apt-get install -y curl
+    - run:
+        name: echo
+        command: echo こんにちは、STAGING世界
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] UnitTest
+    - run:
+        name: echo
+        command: echo [$CIRCLE_BRANCH] テストレポートとカバレッジレポート
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_BRANCH}] OK\"}" --connect-timeout 5 ${DISCORD_WEBHOOK}
+  master:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: apt-get update
+        command: sudo apt-get update
+    - run:
+        name: apt-get install -y curl
+        command: sudo apt-get install -y curl
+    - run:
+        name: echo
+        command: echo こんにちは、MASTER世界
+    - run:
+        name: Discordへ通知
+        command: |
+          curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"[${CIRCLE_BRANCH}] OK\"}" --connect-timeout 5 ${DISCORD_WEBHOOK}
+workflows:
+  build:
+    jobs:
+    - feature
+    - develop
+    - staging
+    - master
+  version: 2
+
+# Original config.yml file:
+# ---
+# version: 2.1
+# 
+# executors:
+#   node:
+#     parameters:
+#       tag:
+#         type: string
+#         default: \"lts\"
+#     docker:
+#       - image: circleci/node:<< parameters.tag >>
+# 
+# commands:
+#   echo-hello:
+#     description: \"CircleCI\u306E\u7D50\u679C\u306B\u51FA\u529B\"
+#     parameters:
+#       message:
+#         type: string
+#         default: \"Hello World\"
+#     steps:
+#       - run:
+#           name: \"echo\"
+#           command: echo << parameters.message >>
+#   apt-get-setup:
+#     description: \"apt-get update\u3068\u5FC5\u8981\u306A\u30D1\u30C3\u30B1\u30FC\u30B8\u3092install\"
+#     steps:
+#       - run:
+#           name: \"apt-get update\"
+#           command: sudo apt-get update
+#       - run:
+#           name: \"apt-get install -y curl\"
+#           command: sudo apt-get install -y curl
+#   notify-discord:
+#     description: \"Discord\u3078\u901A\u77E5\u3059\u308B\"
+#     parameters:
+#       webhook:
+#         type: string
+#         default: ${DISCORD_WEBHOOK}
+#       message:
+#         type: string
+#         default: \"[${CIRCLE_BRANCH}] \u3053\u3093\u306B\u3061\u306F\u4E16\u754C\"
+#       timeout:
+#         type: integer
+#         default: 5
+#     steps:
+#       - run:
+#           name: \"Discord\u3078\u901A\u77E5\"
+#           command: |
+#             curl -X POST -H \"Content-Type:application/json\" -d \"{\\\"content\\\": \\\"<< parameters.message >>\\\"}\" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+# 
+# jobs:
+#   job:
+#     parameters:
+#       message:
+#         type: string
+#         default: \"\u3053\u3093\u306B\u3061\u306F\u4E16\u754C\"
+#       run_textlint:
+#         type: boolean
+#       run_unittest:
+#         type: boolean
+#     executor:
+#       name: node
+#     steps:
+#       - apt-get-setup
+#       - echo-hello:
+#           message: \"\u3053\u3093\u306B\u3061\u306F\u3001<< parameters.message >>\u4E16\u754C\"
+#       - when:
+#           condition: << parameters.run_textlint >>
+#           steps:
+#             - echo-hello:
+#                 message: \"[$CIRCLE_BRANCH] textlint\"
+#             - echo-hello:
+#                 message: \"[$CIRCLE_BRANCH] reviewdog\u3067\u30B3\u30DF\u30C3\u30C8\u306B\u66F8\u304D\u8FBC\u307F\u305F\u3044\"
+#       - when:
+#           condition: << parameters.run_unittest >>
+#           steps:
+#             - echo-hello:
+#                 message: \"[$CIRCLE_BRANCH] UnitTest\"
+#             - echo-hello:
+#                 message: \"[$CIRCLE_BRANCH] \u30C6\u30B9\u30C8\u30EC\u30DD\u30FC\u30C8\u3068\u30AB\u30D0\u30EC\u30C3\u30B8\u30EC\u30DD\u30FC\u30C8\"
+#       - notify-discord:
+#           message: \"[${CIRCLE_BRANCH}] OK\"
+# 
+# workflows:
+#   build:
+#     jobs:
+#       - job:
+#           name: \"feature\"
+#           message: \"FEATURE\"
+#           run_textlint: true
+#           run_unittest: true
+#       - job:
+#           name: \"develop\"
+#           message: \"DEVELOP\"
+#           run_textlint: false
+#           run_unittest: true
+#       - job:
+#           name: \"staging\"
+#           message: \"STAGING\"
+#           run_textlint: false
+#           run_unittest: true
+#       - job:
+#           name: \"master\"
+#           message: \"MASTER\"
+#           run_textlint: false
+#           run_unittest: false
