@@ -49,85 +49,112 @@ commands:
             curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
 
 jobs:
-  job:
-    parameters:
-      message:
-        type: string
-        default: "こんにちは世界"
-      run_textlint:
-        type: boolean
-      run_unittest:
-        type: boolean
-      run_build:
-        type: boolean
-    executor:
-      name: node
+  lint:
+    executor: node
     steps:
-      - apt-get-setup
       - echo-hello:
-          message: "こんにちは、<< parameters.message >>世界"
-      - when:
-          condition: << parameters.run_textlint >>
-          steps:
-            - echo-hello:
-                message: "[$CIRCLE_BRANCH] textlint"
-            - echo-hello:
-                message: "[$CIRCLE_BRANCH] reviewdogでコミットに書き込みたい"
-      - when:
-          condition: << parameters.run_unittest >>
-          steps:
-            - echo-hello:
-                message: "[$CIRCLE_BRANCH] UnitTest"
-            - echo-hello:
-                message: "[$CIRCLE_BRANCH] テストレポートとカバレッジレポート"
-      - when:
-          condition: << parameters.run_build >>
-          steps:
-            - echo-hello:
-                message: "[$CIRCLE_BRANCH] 何かをビルド"
-      - notify-discord:
-          message: "[${CIRCLE_BRANCH}] OK"
+          message: "[$CIRCLE_BRANCH] lint"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] reviewdogでコミットに書き込みたい"
+  run_test_light:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 並列 UnitTest Light"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] テストレポートとカバレッジレポート"
+  run_test:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 並列Test"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] テストレポート(分散状態)とカバレッジレポート(分散状態)"
+  merge_coverage_light:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ(Light版)"
+  merge_coverage:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ"
+  build_something:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 何かをビルド"
+  upseart_pullrequest:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] プルリクエスト"
+  deploy:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] デプロイ"
 
 workflows:
   build:
     jobs:
-      - job:
+      - lint:
           filters:
             branches:
-              only:
-                - /feature\/.*/
-          name: "feature"
-          message: "FEATURE"
-          run_textlint: true
-          run_unittest: true
-          run_build: false
-      - job:
+              only: /feature\/.*/
+      - run_test_light:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - lint
+      - upseart_pullrequest:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - lint
+            - run_test_light
+      - run_test:
           filters:
             branches:
               only:
                 - develop
-          name: "develop"
-          message: "DEVELOP"
-          run_textlint: false
-          run_unittest: true
-          run_build: true
-      - job:
-          filters:
-            branches:
-              only:
                 - staging
-          name: "staging"
-          message: "STAGING"
-          run_textlint: false
-          run_unittest: true
-          run_build: true
-      - job:
+                - master
+      - merge_coverage_light:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - run_test_light
+      - merge_coverage:
           filters:
             branches:
               only:
+                - develop
+                - staging
                 - master
-          name: "master"
-          message: "MASTER"
-          run_textlint: false
-          run_unittest: false
-          run_build: true
+          requires:
+            - run_test
+      - build_something:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+      - deploy:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+            - merge_coverage
+            - build_something
