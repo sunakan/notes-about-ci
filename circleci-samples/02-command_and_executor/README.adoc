@@ -4,7 +4,7 @@
 * コマンド
 +
 ----
-$ circleci local execute -c circleci-samples/01-using-command/config-2.0.yml
+$ circleci local execute -c circleci-samples/02-command_and_executor/config-2.0.yml
 ----
 +
 * 実行結果
