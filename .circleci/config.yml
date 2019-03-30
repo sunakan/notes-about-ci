@@ -2,13 +2,20 @@
 version: 2.1
 
 jobs:
-  build:
+  test:
+    parameters:
+      node-version:
+        type: string
+        default: "lts"
+      message:
+        type: string
+        default: "こんにちは世界"
     executor:
       name: node
-      tag: "10"
+      tag: << parameters.node-version >>
     steps:
       - echo-hello:
-          to: "こんにちは世界"
+          message: "こんにちは<< parameters.message >>世界"
 
 executors:
   node:
@@ -23,10 +30,22 @@ commands:
   echo-hello:
     description: "CircleCIの結果に出力"
     parameters:
-      to:
+      message:
         type: string
         default: "Hello World"
     steps:
       - run:
           name: "echoするだけ"
-          command: echo << parameters.to >>
+          command: echo << parameters.message >>
+
+workflows:
+  build:
+    jobs:
+      - test:
+          name: "alpha"
+          node-version: "8"
+          message: "ALPHA"
+      - test:
+          name: "beta"
+          node-version: "10"
+          message: "BETA"
