@@ -1,11 +1,24 @@
 ---
-# User the Hello-Build
 version: 2.1
 
-orbs:
-  hello: circleci/hello-build@0.0.7 # uses the circleci/buildpack-deps Docker image
+#orbs:
+#  hello: sunakan/hello-world@0.0.2
 
-workflows:
-  "Hello Workflow":
-    jobs:
-      - hello/hello-build
+jobs:
+  myjob:
+    docker:
+      - image: "circleci/node:dubnium-stretch"
+    steps:
+      - echo-hello:
+        to: "こんにちは世界"
+
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      to:
+        type: string
+        default: "Hello World"
+    steps:
+      - run: echo << parameters.to >>
