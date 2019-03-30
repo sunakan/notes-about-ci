@@ -21,15 +21,6 @@ commands:
       - run:
           name: "echo"
           command: echo "<< parameters.message >>";
-  apt-get-setup:
-    description: "apt-get updateと必要なパッケージをinstall"
-    steps:
-      - run:
-          name: "apt-get update"
-          command: sudo apt-get update
-      - run:
-          name: "apt-get install -y curl"
-          command: sudo apt-get install -y curl
   notify-discord:
     description: "Discordへ通知する"
     parameters:
