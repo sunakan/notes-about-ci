@@ -20,7 +20,7 @@ commands:
     steps:
       - run:
           name: "echo"
-          command: echo << parameters.message >>
+          command: echo "<< parameters.message >>";
   apt-get-setup:
     description: "apt-get updateと必要なパッケージをinstall"
     steps:
@@ -62,12 +62,12 @@ jobs:
       - echo-hello:
           message: "[$CIRCLE_BRANCH] 並列 UnitTest Light"
       - echo-hello:
-          message: "[$CIRCLE_BRANCH] テストレポートとカバレッジレポート"
+          message: "[$CIRCLE_BRANCH] テストレポート(分散状態)とカバレッジレポート(分散状態)"
   run_test:
     executor: node
     steps:
       - echo-hello:
-          message: "[$CIRCLE_BRANCH] 並列Test"
+          message: "[$CIRCLE_BRANCH] 並列 Test"
       - echo-hello:
           message: "[$CIRCLE_BRANCH] テストレポート(分散状態)とカバレッジレポート(分散状態)"
   merge_coverage_light:
