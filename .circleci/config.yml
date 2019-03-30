@@ -9,8 +9,6 @@ executors:
         default: "lts"
     docker:
       - image: circleci/node:<< parameters.tag >>
-    environment:
-      DISCORD_WEBHOOK: ${DISCORD_WEBHOOK}
 
 commands:
   echo-hello:
@@ -40,12 +38,12 @@ commands:
         default: ${DISCORD_WEBHOOK}
       message:
         type: string
-        default: "Hello World"
+        default: "PING PONG"
     steps:
       - run:
           name: "Discordへ通知"
           command: |
-            curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" "<< parameters.webhook >>"
+            curl -X POST --connect-timeout 5 -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" << parameters.webhook >>
 
 jobs:
   job:
@@ -59,7 +57,8 @@ jobs:
       - apt-get-setup
       - echo-hello:
           message: "こんにちは<< parameters.message >>世界"
-      - notify-discord
+      - notify-discord:
+          message: "[${CIRCLE_BRANCH}] OK"
 
 workflows:
   build:
