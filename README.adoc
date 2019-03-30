@@ -1,3 +1,5 @@
 = Notes about CI
 
-image::https://img.shields.io/badge/license-MIT-blue.svg[MIT, link="https://opensource.org/licenses/MIT"]
+image:https://img.shields.io/badge/license-MIT-blue.svg[MIT, link="https://opensource.org/licenses/MIT"]
+
+image:https://circleci.com/gh/sunakan/notes-about-ci/tree/master.svg?style=shield["CircleCI", link="https://circleci.com/gh/sunakan/notes-about-ci/tree/master"]
