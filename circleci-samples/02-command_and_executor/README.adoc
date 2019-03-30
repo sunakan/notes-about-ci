@@ -1,0 +1,22 @@
+=== commandsとexecutorsを使ったサンプル
+
+* 2.1がまだ対応されていない場合
+* コマンド
++
+----
+$ circleci local execute -c circleci-samples/01-using-command/config-2.0.yml
+----
++
+* 実行結果
++
+----
+====>> Spin up Environment
+Build-agent version 1.0.7742-ad8fb537 (2019-02-14T15:58:49+0000)
+Starting container circleci/node:10 #<= ちゃんと10!!
+...
+====>> echoするだけ
+  #!/bin/bash -eo pipefail
+echo こんにちは世界
+こんにちは世界
+Success!
+---
