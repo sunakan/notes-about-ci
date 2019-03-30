@@ -1,22 +1,6 @@
 ---
 version: 2.1
 
-jobs:
-  test:
-    parameters:
-      node-version:
-        type: string
-        default: "lts"
-      message:
-        type: string
-        default: "こんにちは世界"
-    executor:
-      name: node
-      tag: << parameters.node-version >>
-    steps:
-      - echo-hello:
-          message: "こんにちは<< parameters.message >>世界"
-
 executors:
   node:
     parameters:
@@ -35,17 +19,33 @@ commands:
         default: "Hello World"
     steps:
       - run:
-          name: "echoするだけ"
+          name: "echo"
           command: echo << parameters.message >>
+
+jobs:
+  job:
+    parameters:
+      message:
+        type: string
+        default: "こんにちは世界"
+    executor:
+      name: node
+    steps:
+      - echo-hello:
+          message: "こんにちは<< parameters.message >>世界"
 
 workflows:
   build:
     jobs:
-      - test:
-          name: "alpha"
-          node-version: "8"
-          message: "ALPHA"
-      - test:
-          name: "beta"
-          node-version: "10"
-          message: "BETA"
+      - job:
+          name: "feature"
+          message: "FEATURE"
+      - job:
+          name: "develop"
+          message: "DEVELOP"
+      - job:
+          name: "staging"
+          message: "STAGING"
+      - job:
+          name: "master"
+          message: "MASTER"
