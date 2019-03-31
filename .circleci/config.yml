@@ -65,13 +65,16 @@ commands:
         default: ".github/PULL_REQUEST_TEMPLATE.md"
     steps:
       - run:
-          name: "hubコマンドを利用して指定されたブランチへPull Request"
+          name: "<< parameters.from >>ブランチを<< parameters.to >>ブランチへpull request"
           command: |
             hub pr list -h "<< parameters.from >>" -b "<< parameters.to >>" > /tmp/pullreq && \
-            if [ ! -s /tmp/pullreq ]; then
+            if [ -s /tmp/pullreq ]; then
+              echo "既にpull request済みです"
+              cat /tmp/pullreq
+            else
               hub pull-request --no-edit -h "<< parameters.from >>" -b "<< parameters.to >>" -F "<< parameters.template >>"
+              echo "pull requestしました"
             fi
-
 
 jobs:
   lint:
