@@ -38,11 +38,42 @@ commands:
           name: "Discordへ通知"
           command: |
             curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+  install_hub:
+    description: "hubコマンドがなければインストール"
+    parameters:
+      version:
+        type: string
+        default: "2.11.1"
+    steps:
+      - run:
+          name: "hubコマンドがなければインストール"
+          command: |
+            type hub || \
+            (curl -sSLf https://github.com/github/hub/releases/download/v<< parameters.version >>/hub-linux-amd64-<< parameters.version >>.tgz | \
+              tar zxf - --strip-components=1 -C /tmp && \
+              sudo mv /tmp/bin/hub /usr/local/bin/hub)
+  upseart_pullrequest:
+    description: "hubコマンドを利用してしてされたブランチへpull request"
+    parameters:
+      from:
+        type: string
+      to:
+        type: string
+        default: "master"
+      template:
+        type: string
+        default: ".github/PULL_REQUEST_TEMPLATE.md"
+    steps:
+      - run:
+          name: "hubコマンドを利用して指定されたブランチへPull Request"
+          command: |
+            hub pull-request --no-edit -h << parameters.from >> -b << parameters.to >> -F << parameters.template >>
 
 jobs:
   lint:
     executor: node
     steps:
+      - checkout
       - echo-hello:
           message: "[$CIRCLE_BRANCH] lint"
       - echo-hello:
@@ -50,6 +81,7 @@ jobs:
   run_test_light:
     executor: node
     steps:
+      - checkout
       - echo-hello:
           message: "[$CIRCLE_BRANCH] 並列 UnitTest Light"
       - echo-hello:
@@ -57,6 +89,7 @@ jobs:
   run_test:
     executor: node
     steps:
+      - checkout
       - echo-hello:
           message: "[$CIRCLE_BRANCH] 並列 Test"
       - echo-hello:
@@ -64,23 +97,36 @@ jobs:
   merge_coverage_light:
     executor: node
     steps:
+      - checkout
       - echo-hello:
           message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ(Light版)"
   merge_coverage:
     executor: node
     steps:
+      - checkout
       - echo-hello:
           message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ"
   build_something:
     executor: node
     steps:
+      - checkout
       - echo-hello:
           message: "[$CIRCLE_BRANCH] 何かをビルド"
   upseart_pullrequest:
     executor: node
     steps:
-      - echo-hello:
-          message: "[$CIRCLE_BRANCH] プルリクエスト"
+      - checkout
+      - install_hub:
+          version: "2.11.1"
+      - upseart_pullrequest:
+          from: $CIRCLE_BRANCH
+          to: "develop"
+      - upseart_pullrequest:
+          from: $CIRCLE_BRANCH
+          to: "staging"
+      - upseart_pullrequest:
+          from: $CIRCLE_BRANCH
+          to: "master"
   deploy:
     executor: node
     steps:
