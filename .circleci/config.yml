@@ -67,7 +67,11 @@ commands:
       - run:
           name: "hubコマンドを利用して指定されたブランチへPull Request"
           command: |
-            hub pull-request --no-edit -h << parameters.from >> -b << parameters.to >> -F << parameters.template >>
+            hub pr list -h -h << parameters.from >> -b << parameters.to >> > /tmp/pullreq && \
+            if [ ! -s /tmp/pullreq ]; then \
+            hub pull-request --no-edit -h << parameters.from >> -b << parameters.to >> -F << parameters.template >> \
+            fi
+
 
 jobs:
   lint:
