@@ -1,0 +1,10 @@
+=== curlでDiscordへ通知
+
+* 2.1がまだ対応されていない場合
+* コマンド
++
+----
+$ circleci local execute -c circleci-samples/05-discord/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job feature
+----
+
+* localでやる場合は、環境変数を代入してあげないといけないことに注意

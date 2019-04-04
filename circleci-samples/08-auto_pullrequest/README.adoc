@@ -1,0 +1,5 @@
+=== feature/*ブランチをそれぞれのブランチへ自動プルリク
+
+* localで確認できなかった...
+** .gitがなくて、git repositoryじゃないとか言われる(checkoutしても)
+** GITHUB_TOKENの発行が必要

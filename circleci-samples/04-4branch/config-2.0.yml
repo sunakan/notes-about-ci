@@ -1,0 +1,91 @@
+version: 2
+jobs:
+  feature:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: echo
+        command: echo こんにちはFEATURE世界
+  develop:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: echo
+        command: echo こんにちはDEVELOP世界
+  staging:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: echo
+        command: echo こんにちはSTAGING世界
+  master:
+    docker:
+    - image: circleci/node:lts
+    steps:
+    - run:
+        name: echo
+        command: echo こんにちはMASTER世界
+workflows:
+  build:
+    jobs:
+    - feature
+    - develop
+    - staging
+    - master
+  version: 2
+
+# Original config.yml file:
+# ---
+# version: 2.1
+# 
+# executors:
+#   node:
+#     parameters:
+#       tag:
+#         type: string
+#         default: \"lts\"
+#     docker:
+#       - image: circleci/node:<< parameters.tag >>
+# 
+# commands:
+#   echo-hello:
+#     description: \"CircleCI\u306E\u7D50\u679C\u306B\u51FA\u529B\"
+#     parameters:
+#       message:
+#         type: string
+#         default: \"Hello World\"
+#     steps:
+#       - run:
+#           name: \"echo\"
+#           command: echo << parameters.message >>
+# 
+# jobs:
+#   job:
+#     parameters:
+#       message:
+#         type: string
+#         default: \"\u3053\u3093\u306B\u3061\u306F\u4E16\u754C\"
+#     executor:
+#       name: node
+#     steps:
+#       - echo-hello:
+#           message: \"\u3053\u3093\u306B\u3061\u306F<< parameters.message >>\u4E16\u754C\"
+# 
+# workflows:
+#   build:
+#     jobs:
+#       - job:
+#           name: \"feature\"
+#           message: \"FEATURE\"
+#       - job:
+#           name: \"develop\"
+#           message: \"DEVELOP\"
+#       - job:
+#           name: \"staging\"
+#           message: \"STAGING\"
+#       - job:
+#           name: \"master\"
+#           message: \"MASTER\"

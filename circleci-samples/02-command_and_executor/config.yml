@@ -1,0 +1,32 @@
+---
+version: 2.1
+
+jobs:
+  build:
+    executor:
+      name: node
+      tag: "10"
+    steps:
+      - echo-hello:
+          to: "こんにちは世界"
+
+executors:
+  node:
+    parameters:
+      tag:
+        type: string
+        default: "lts"
+    docker:
+      - image: circleci/node:<< parameters.tag >>
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      to:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "echoするだけ"
+          command: echo << parameters.to >>

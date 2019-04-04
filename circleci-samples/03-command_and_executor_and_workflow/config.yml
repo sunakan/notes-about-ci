@@ -1,0 +1,51 @@
+---
+version: 2.1
+
+jobs:
+  test:
+    parameters:
+      node-version:
+        type: string
+        default: "lts"
+      message:
+        type: string
+        default: "こんにちは世界"
+    executor:
+      name: node
+      tag: << parameters.node-version >>
+    steps:
+      - echo-hello:
+          message: "こんにちは<< parameters.message >>世界"
+
+executors:
+  node:
+    parameters:
+      tag:
+        type: string
+        default: "lts"
+    docker:
+      - image: circleci/node:<< parameters.tag >>
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      message:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "echoするだけ"
+          command: echo << parameters.message >>
+
+workflows:
+  build:
+    jobs:
+      - test:
+          name: "alpha"
+          node-version: "8"
+          message: "ALPHA"
+      - test:
+          name: "beta"
+          node-version: "10"
+          message: "BETA"

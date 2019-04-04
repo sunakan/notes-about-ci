@@ -1,0 +1,8 @@
+=== feature/*ブランチで、プルリク済みのIssueを全て更新
+
+* localで確認できなかった...
+** .gitがなくて、git repositoryじゃないとか言われる(checkoutしても)
+** GITHUB_TOKENの発行が必要
+
+* 課題
+** 初めてプルリクしたときは必要ない

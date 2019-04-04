@@ -1,0 +1,259 @@
+---
+version: 2.1
+
+executors:
+  node:
+    parameters:
+      tag:
+        type: string
+        default: "lts"
+    docker:
+      - image: circleci/node:<< parameters.tag >>
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      message:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "echo"
+          command: echo "<< parameters.message >>";
+  notify-discord:
+    description: "Discordへ通知する"
+    parameters:
+      webhook:
+        type: string
+        default: ${DISCORD_WEBHOOK}
+      message:
+        type: string
+        default: "[${CIRCLE_BRANCH}] こんにちは世界"
+      timeout:
+        type: integer
+        default: 5
+    steps:
+      - run:
+          name: "Discordへ通知"
+          command: |
+            curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+  install_hub:
+    description: "hubコマンドがなければインストール"
+    parameters:
+      version:
+        type: string
+        default: "2.11.1"
+    steps:
+      - run:
+          name: "hubコマンドがなければインストール"
+          command: |
+            type hub || \
+            (curl -sSLf https://github.com/github/hub/releases/download/v<< parameters.version >>/hub-linux-amd64-<< parameters.version >>.tgz | \
+              tar zxf - --strip-components=1 -C /tmp && \
+              sudo mv /tmp/bin/hub /usr/local/bin/hub)
+  install_jq:
+    description: "jqコマンドがなければインストール"
+    parameters:
+      version:
+        type: string
+        default: "1.5"
+    steps:
+      - run:
+          name: "jqコマンドがなければインストール"
+          command: |
+            type jq || \
+            (sudo curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-"<< parameters.version >>"/jq-linux64 && sudo chmod +x /usr/local/bin/jq)
+  upseart_pullrequest:
+    description: "hubコマンドを利用してしてされたブランチへpull request"
+    parameters:
+      from:
+        type: string
+      to:
+        type: string
+        default: "master"
+      template:
+        type: string
+        default: ".github/PULL_REQUEST_TEMPLATE.md"
+    steps:
+      - run:
+          name: "<< parameters.from >>ブランチを<< parameters.to >>ブランチへpull request"
+          command: |
+            hub pr list -h "<< parameters.from >>" -b "<< parameters.to >>" > /tmp/pullreq && \
+            if [ -s /tmp/pullreq ]; then
+              echo "既にpull request済みです"
+              cat /tmp/pullreq
+            else
+              hub pull-request --no-edit -h "<< parameters.from >>" -b "<< parameters.to >>" -F "<< parameters.template >>"
+              echo "pull requestしました"
+            fi
+  update_pullrequested_issues:
+    description: "hubコマンドとGithub APIを利用してしてされたpull request中の全てのIssueをアップデート"
+    parameters:
+      github_token:
+        type: string
+        default: ${GITHUB_TOKEN}
+    steps:
+      - run:
+          name: "hubコマンドを利用して現在のブランチからリクエストしているプルリクエストの一覧を抽出"
+          command: |
+            hub pr list -h "`git symbolic-ref --short HEAD`" > /tmp/pullreq
+      - run:
+          name: "jqコマンドでアプデ予定のIssueの内容をjsonファイルにする"
+          command: |
+            jq -n \
+            --arg title "`head -1 .github/PULL_REQUEST_TEMPLATE.md`" \
+            --arg body "`cat .github/PULL_REQUEST_TEMPLATE.md`" \
+            '{title: $title, body: $body}' > /tmp/pullreq.update.json
+      - run:
+          name: "GithubのAPIを利用してIssueをアップデート"
+          command: |
+            cat /tmp/pullreq | while read v; do
+              issuenumber="`set $v && echo ${1} | sed -e 's/#//g'`"
+              curl -X PATCH https://api.github.com/repos/sunakan/notes-about-ci/issues/$issuenumber \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -H "Content-Type:application/json" \
+              -d @/tmp/pullreq.update.json
+            done
+
+jobs:
+  lint:
+    executor: node
+    steps:
+      - checkout
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] lint"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] reviewdogでコミットに書き込みたい"
+  run_test_light:
+    executor: node
+    steps:
+      - checkout
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 並列 UnitTest Light"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] テストレポート(分散状態)とカバレッジレポート(分散状態)"
+  run_test:
+    executor: node
+    steps:
+      - checkout
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 並列 Test"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] テストレポート(分散状態)とカバレッジレポート(分散状態)"
+  merge_coverage_light:
+    executor: node
+    steps:
+      - checkout
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ(Light版)"
+  merge_coverage:
+    executor: node
+    steps:
+      - checkout
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ"
+  build_something:
+    executor: node
+    steps:
+      - checkout
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 何かをビルド"
+  upseart_pullrequest:
+    executor: node
+    steps:
+      - checkout
+      - install_hub:
+          version: "2.11.1"
+      - upseart_pullrequest:
+          from: $CIRCLE_BRANCH
+          to: "develop"
+      - upseart_pullrequest:
+          from: $CIRCLE_BRANCH
+          to: "staging"
+      - upseart_pullrequest:
+          from: $CIRCLE_BRANCH
+          to: "master"
+  deploy:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] デプロイ"
+  update_pullrequested_issues:
+    executor: node
+    steps:
+      - checkout
+      - install_jq:
+          version: "1.5"
+      - install_hub:
+          version: "2.11.1"
+      - update_pullrequested_issues
+
+workflows:
+  build:
+    jobs:
+      - lint:
+          filters:
+            branches:
+              only: /feature\/.*/
+      - run_test_light:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - lint
+      - upseart_pullrequest:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - lint
+            - run_test_light
+      - update_pullrequested_issues:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - upseart_pullrequest
+      - run_test:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - merge_coverage_light:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - run_test_light
+      - merge_coverage:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+      - build_something:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+      - deploy:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+            - merge_coverage
+            - build_something

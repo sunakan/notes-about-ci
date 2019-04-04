@@ -1,0 +1,13 @@
+=== Workflowの機能を使ってPipelineを表現
+
+* `circleci local execute` でworkflowができないためそれっぽくするしかない
+* コマンド
++
+----
+circleci local execute -c circleci-samples/07-pipeline_by_workflow/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job lint
+circleci local execute -c circleci-samples/07-pipeline_by_workflow/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job run_test_light
+circleci local execute -c circleci-samples/07-pipeline_by_workflow/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job merge_coverage_light
+circleci local execute -c circleci-samples/07-pipeline_by_workflow/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job upseart_pullrequest
+----
+
+* localでやる場合は、環境変数を代入してあげないといけないことに注意

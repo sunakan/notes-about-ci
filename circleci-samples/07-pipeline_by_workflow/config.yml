@@ -1,0 +1,151 @@
+---
+version: 2.1
+
+executors:
+  node:
+    parameters:
+      tag:
+        type: string
+        default: "lts"
+    docker:
+      - image: circleci/node:<< parameters.tag >>
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      message:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "echo"
+          command: echo "<< parameters.message >>";
+  notify-discord:
+    description: "Discordへ通知する"
+    parameters:
+      webhook:
+        type: string
+        default: ${DISCORD_WEBHOOK}
+      message:
+        type: string
+        default: "[${CIRCLE_BRANCH}] こんにちは世界"
+      timeout:
+        type: integer
+        default: 5
+    steps:
+      - run:
+          name: "Discordへ通知"
+          command: |
+            curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+
+jobs:
+  lint:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] lint"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] reviewdogでコミットに書き込みたい"
+  run_test_light:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 並列 UnitTest Light"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] テストレポート(分散状態)とカバレッジレポート(分散状態)"
+  run_test:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 並列 Test"
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] テストレポート(分散状態)とカバレッジレポート(分散状態)"
+  merge_coverage_light:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ(Light版)"
+  merge_coverage:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 分散したカバレッジのマージ"
+  build_something:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] 何かをビルド"
+  upseart_pullrequest:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] プルリクエスト"
+  deploy:
+    executor: node
+    steps:
+      - echo-hello:
+          message: "[$CIRCLE_BRANCH] デプロイ"
+
+workflows:
+  build:
+    jobs:
+      - lint:
+          filters:
+            branches:
+              only: /feature\/.*/
+      - run_test_light:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - lint
+      - upseart_pullrequest:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - lint
+            - run_test_light
+      - run_test:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - merge_coverage_light:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - run_test_light
+      - merge_coverage:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+      - build_something:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+      - deploy:
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+          requires:
+            - run_test
+            - merge_coverage
+            - build_something

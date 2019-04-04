@@ -107,3 +107,6 @@ tags
 [._]*.un~
 
 # End of https://www.gitignore.io/api/vim,node
+
+# localで実行するためだけの.circleci/config-2.0.yml
+.circleci/config-2.0.yml

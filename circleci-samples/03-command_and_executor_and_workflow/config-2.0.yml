@@ -1,0 +1,75 @@
+version: 2
+jobs:
+  alpha:
+    docker:
+    - image: circleci/node:8
+    steps:
+    - run:
+        name: echoするだけ
+        command: echo こんにちはALPHA世界
+  beta:
+    docker:
+    - image: circleci/node:10
+    steps:
+    - run:
+        name: echoするだけ
+        command: echo こんにちはBETA世界
+workflows:
+  build:
+    jobs:
+    - alpha
+    - beta
+  version: 2
+
+# Original config.yml file:
+# ---
+# version: 2.1
+# 
+# jobs:
+#   test:
+#     parameters:
+#       node-version:
+#         type: string
+#         default: \"lts\"
+#       message:
+#         type: string
+#         default: \"\u3053\u3093\u306B\u3061\u306F\u4E16\u754C\"
+#     executor:
+#       name: node
+#       tag: << parameters.node-version >>
+#     steps:
+#       - echo-hello:
+#           message: \"\u3053\u3093\u306B\u3061\u306F<< parameters.message >>\u4E16\u754C\"
+# 
+# executors:
+#   node:
+#     parameters:
+#       tag:
+#         type: string
+#         default: \"lts\"
+#     docker:
+#       - image: circleci/node:<< parameters.tag >>
+# 
+# commands:
+#   echo-hello:
+#     description: \"CircleCI\u306E\u7D50\u679C\u306B\u51FA\u529B\"
+#     parameters:
+#       message:
+#         type: string
+#         default: \"Hello World\"
+#     steps:
+#       - run:
+#           name: \"echo\u3059\u308B\u3060\u3051\"
+#           command: echo << parameters.message >>
+# 
+# workflows:
+#   build:
+#     jobs:
+#       - test:
+#           name: \"alpha\"
+#           node-version: \"8\"
+#           message: \"ALPHA\"
+#       - test:
+#           name: \"beta\"
+#           node-version: \"10\"
+#           message: \"BETA\"

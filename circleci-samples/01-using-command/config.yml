@@ -1,0 +1,22 @@
+---
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: "circleci/node:dubnium-stretch"
+    steps:
+      - echo-hello:
+          to: "こんにちは世界"
+
+commands:
+  echo-hello:
+    description: "CircleCIの結果に出力"
+    parameters:
+      to:
+        type: string
+        default: "Hello World"
+    steps:
+      - run:
+          name: "echoするだけ"
+          command: echo << parameters.to >>
