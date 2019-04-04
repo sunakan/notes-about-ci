@@ -2,7 +2,7 @@
 
 image:https://img.shields.io/badge/license-MIT-blue.svg[MIT, link="https://opensource.org/licenses/MIT"]
 
-image:https://circleci.com/gh/sunakan/notes-about-ci/tree/master.svg?style=shield["CircleCI", link="https://circleci.com/gh/sunakan/notes-about-ci/tree/master"]
+image:https://circleci.com/gh/sunakan/notes-about-ci/tree/master.svg?style=shield["CircleCI", link="https://circleci.com/gh/sunakan/notes-about-circleci/tree/master"]
 
 == CircleCI
 * localでの実行方法(もしconfig.ymlが2.1なら2.0版にしないと実行できない(対応待ち))
