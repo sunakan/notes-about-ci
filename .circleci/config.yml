@@ -52,6 +52,18 @@ commands:
             (curl -sSLf https://github.com/github/hub/releases/download/v<< parameters.version >>/hub-linux-amd64-<< parameters.version >>.tgz | \
               tar zxf - --strip-components=1 -C /tmp && \
               sudo mv /tmp/bin/hub /usr/local/bin/hub)
+  install_jq:
+    description: "jqコマンドがなければインストール"
+    parameters:
+      version:
+        type: string
+        default: "1.5"
+    steps:
+      - run:
+          name: "jqコマンドがなければインストール"
+          command: |
+            type jq || \
+            (sudo curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-"<< parameters.version >>"/jq-linux64 && sudo chmod +x /usr/local/bin/jq)
   upseart_pullrequest:
     description: "hubコマンドを利用してしてされたブランチへpull request"
     parameters:
@@ -75,6 +87,34 @@ commands:
               hub pull-request --no-edit -h "<< parameters.from >>" -b "<< parameters.to >>" -F "<< parameters.template >>"
               echo "pull requestしました"
             fi
+  update_pullrequested_issues:
+    description: "hubコマンドとGithub APIを利用してしてされたpull request中の全てのIssueをアップデート"
+    parameters:
+      github_token:
+        type: string
+        default: ${GITHUB_TOKEN}
+    steps:
+      - run:
+          name: "hubコマンドを利用して現在のブランチからリクエストしているプルリクエストの一覧を抽出"
+          command: |
+            hub pr list -h "`git symbolic-ref --short HEAD`" > /tmp/pullreq
+      - run:
+          name: "jqコマンドでアプデ予定のIssueの内容をjsonファイルにする"
+          command: |
+            jq -n \
+            --arg title "`head -1 .github/PULL_REQUEST_TEMPLATE.md`" \
+            --arg body "`cat .github/PULL_REQUEST_TEMPLATE.md`" \
+            '{title: $title, body: $body}' > /tmp/pullreq.update.json
+      - run:
+          name: "GithubのAPIを利用してIssueをアップデート"
+          command: |
+            cat /tmp/pullreq | while read v; do
+              issuenumber="`set $v && echo ${1} | sed -e 's/#//g'`"
+              curl -X PATCH https://api.github.com/repos/sunakan/notes-about-ci/issues/$issuenumber \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -H "Content-Type:application/json" \
+              -d @/tmp/pullreq.update.json
+            done
 
 jobs:
   lint:
@@ -139,6 +179,15 @@ jobs:
     steps:
       - echo-hello:
           message: "[$CIRCLE_BRANCH] デプロイ"
+  update_pullrequested_issues:
+    executor: node
+    steps:
+      - checkout
+      - install_jq:
+          version: "1.5"
+      - install_hub:
+          version: "2.11.1"
+      - update_pullrequested_issues
 
 workflows:
   build:
@@ -160,6 +209,12 @@ workflows:
           requires:
             - lint
             - run_test_light
+      - update_pullrequested_issues:
+          filters:
+            branches:
+              only: /feature\/.*/
+          requires:
+            - upseart_pullrequest
       - run_test:
           filters:
             branches:
