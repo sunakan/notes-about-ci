@@ -18,11 +18,13 @@ Build-agent version ...
 echo こんにちは世界
 こんにちは世界
 Success!
----
+----
 
 
 * CircleCIで見たworkflow
-** link:https://circleci.com/workflow-run/f1780bcc-24fe-41b4-9fe1-5d767c0ac289[CircleCIでの表示]
+
+link:https://circleci.com/workflow-run/f1780bcc-24fe-41b4-9fe1-5d767c0ac289[CircleCIでの表示]
 
 * 自分で表現: workflow
-** image::https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000.svg[commandsを使ったサンプル, link="http://www.plantuml.com/plantuml/uml/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000"]
+
+image::https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000.svg[commandsを使ったサンプル, link="http://www.plantuml.com/plantuml/uml/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000"]
