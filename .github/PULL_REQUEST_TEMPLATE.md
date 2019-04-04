@@ -1,9 +1,11 @@
-# [WIP] Story: [Storyチケット番号](StoryチケットURL)
+# Story: [Storyチケット番号](StoryチケットURL)
 
 # 内容
 
-- [ ] まだ
-- [ ] まだ
-- [ ] まだ
-- [ ] まだ
+テスト
+
+- [x] OK
+- [x] OK
+- [x] OK
+- [x] OK
 - [x] OK
