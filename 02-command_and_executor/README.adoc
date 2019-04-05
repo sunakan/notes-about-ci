@@ -19,4 +19,12 @@ Starting container circleci/node:10 #<= ちゃんと10!!
 echo こんにちは世界
 こんにちは世界
 Success!
----
+----
+
+* CircleCIで見たworkflow
+
+link:https://circleci.com/workflow-run/9462d901-0720-44ae-a5c8-89cfae9d95ae[CircleCIでの表示]
+
+* 自分で表現: workflow
+
+image:https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000.svg[link="http://www.plantuml.com/plantuml/uml/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000"]
