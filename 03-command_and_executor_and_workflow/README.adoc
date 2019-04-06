@@ -26,4 +26,14 @@ Starting container circleci/node:10 #<= BETAは10
   #!/bin/bash -eo pipefail
 echo こんにちはBETA世界
 こんにちはBETA世界
----
+----
+
+* CircleCIで見たworkflow
+
+link:https://circleci.com/workflow-run/6bb764f2-13be-4784-9ff8-494fb48af5cb[CircleCIでの表示]
+
+* 自分で表現: workflow
+
+:path: SoWkIImgAStDuG8pkDBoYxAvh6oIx19p2Z8IRVIJxBXqWO0hDJaZNpSZDISdtngiHY4nFJ4p3wmoARK4XyBKl1IGMX3DvG0aWDO00000
+
+image:https://www.plantuml.com/plantuml/svg/{path}.svg[link="http://www.plantuml.com/plantuml/uml/{path}"]

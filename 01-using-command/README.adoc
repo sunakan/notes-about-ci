@@ -27,4 +27,6 @@ link:https://circleci.com/workflow-run/f1780bcc-24fe-41b4-9fe1-5d767c0ac289[Circ
 
 * 自分で表現: workflow
 
-image:https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000.svg[link="http://www.plantuml.com/plantuml/uml/SoWkIImgAStDuG8pkAoIIZDpKgov75BpKe2Y0000"]
+:path: SoWkIImgAStDuG8pkAniakoIIZDpKcpqa-ouT860ApKv8ryt8pKd9z-QApKlXSi1I00r0000
+
+image:https://www.plantuml.com/plantuml/svg/{path}.svg[link="http://www.plantuml.com/plantuml/uml/{path}"]

@@ -18,3 +18,13 @@ echo こんにちはFEATURE世界
 こんにちはFEATURE世界
 Success!
 ----
+
+* CircleCIで見たworkflow
+
+link:https://circleci.com/workflow-run/09f65375-ee2e-48d0-9168-86eba2c42c36[CircleCIでの表示]
+
+* 自分で表現: workflow
+
+:path: SoWkIImgAStDuG8pkDBoYxAvh6oIxD9I4qjAYr9jz9Fik7I1W2irEIDVDoCr9oVV6gnA8J4zCJCFh3ObjImr9x-0ABL0Qz8pyzA9KfkRM5oIMeHTQMfU2aWrYEPo0190Bm00
+
+image:https://www.plantuml.com/plantuml/svg/{path}.svg[link="http://www.plantuml.com/plantuml/uml/{path}"]
