@@ -15,4 +15,3 @@
 * aws,AWS
 * GCE,gce
 * Crystal,crystal
-* `./.git/` がなくて、git repositoryじゃないとか言われる(checkoutしても)
