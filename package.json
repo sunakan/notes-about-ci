@@ -1,19 +1,8 @@
 {
   "name": "app",
   "version": "1.0.0",
-  "description": "= Notes about CircleCI",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sunakan/notes-about-circleci.git"
-  },
+  "description": "Notes about CircleCI",
   "author": "sunakan",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/sunakan/notes-about-circleci/issues"
-  },
-  "homepage": "https://github.com/sunakan/notes-about-circleci#readme"
+  "private": true
 }
