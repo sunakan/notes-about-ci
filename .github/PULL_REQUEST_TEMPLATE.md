@@ -3,6 +3,6 @@
 # 内容
 
 - [x] Lint
-- [ ] Reviewdog
-- [ ] CIとLint
-- [ ] CIとLintとReviewdog
+- [x] Reviewdog
+- [x] CIとLint
+- [x] CIとLintとReviewdog
