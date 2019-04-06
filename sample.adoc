@@ -1,0 +1,18 @@
+== サンプル
+
+* go、Go,GO
+* Scala,scala,SCALA
+* Shell,shell,SHELL
+* Windows,WIN
+* Ruby,RUBY,ruby
+* gem,GEM,Gemfile
+* Python,PYTHON,python
+* Node,node
+* Rust,rust
+* Docker,docker
+* Plantuml,UML,PLAntUML
+* kubernetes,Kubernetes
+* aws,AWS
+* GCE,gce
+* Crystal,crystal
+* `./.git/` がなくて、git repositoryじゃないとか言われる(checkoutしても)

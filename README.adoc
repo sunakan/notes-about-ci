@@ -31,4 +31,7 @@ $ sh circleci-execute.sh
 $ docker-compose run --rm app npm init
 $ docker-compose run --rm app npm i --save-dev textlint
 $ docker-compose run --rm app npm i --save-dev textlint-rule-max-ten textlint-rule-spellcheck-tech-word textlint-rule-no-mix-dearu-desumasu
+$ docker-compose run --rm app npm i --save-dev textlint-plugin-asciidoc-loose
+$ vim .textlintrc
+$ docker-compose run --rm app node_modules/.bin/textlint *.adoc **/*.adoc
 ----
