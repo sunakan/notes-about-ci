@@ -22,3 +22,11 @@ $ sh circleci-execute.sh
 ** マージ
 ** コンフリクトを修正
 ** ブランチの削除
+
+== Lint
+
+* 準備
+
+----
+$ docker-compose run --rm app npm init
+----
