@@ -30,6 +30,9 @@ commands:
       message:
         type: string
         default: "[${CIRCLE_BRANCH}] こんにちは世界"
+      is_eval:
+        type: boolean
+        default: false
       timeout:
         type: integer
         default: 5
@@ -37,7 +40,11 @@ commands:
       - run:
           name: "Discordへ通知"
           command: |
-            curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+            if << parameters.is_eval >>; then
+              eval "<< parameters.message >>" | xargs -Imsg curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"msg\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+            else
+              curl -X POST -H "Content-Type:application/json" -d "{\"content\": \"<< parameters.message >>\"}" --connect-timeout << parameters.timeout >> << parameters.webhook >>
+            fi
   install_hub:
     description: "hubコマンドがなければインストール"
     parameters:
@@ -135,7 +142,7 @@ commands:
             test ${CI_PULL_REQUEST} || exit 0
             cond="git diff --name-only --diff-filter=ACMR origin/master | grep -a '.*.adoc$'"
             if eval $cond >/dev/null; then
-              if ! eval $cond | xargs $(npm bin)/textlint -f pretty-error 1>&2; then
+              if ! eval $cond | xargs $(npm bin)/textlint -f pretty-error 1>&2 >> ./lint-result; then
                 mkdir -p ~/bin && export PATH="~/bin/:$PATH"
                 curl -fSL https://github.com/reviewdog/reviewdog/releases/download/<< parameters.reviewdog_version >>/reviewdog_linux_amd64 -o ~/bin/reviewdog
                 chmod +x ~/bin/reviewdog
@@ -154,10 +161,9 @@ jobs:
     steps:
       - checkout
       - textlint
-      - echo-hello:
-          message: "[$CIRCLE_BRANCH] lint"
-      - echo-hello:
-          message: "[$CIRCLE_BRANCH] reviewdogでコミットに書き込みたい"
+      - notify-discord:
+          message: "(test -s lint-result && cat lint-result) || echo 'lint is OK'"
+          is_eval: true
   run_test_light:
     executor: node
     steps:

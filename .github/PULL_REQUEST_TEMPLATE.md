@@ -1,8 +1,5 @@
-# Story: [LintとReviewdogの導入](https://github.com/sunakan/notes-about-ci/issues/12)
+# Story: [Lintの結果をDiscordへ通知](https://github.com/sunakan/notes-about-ci/issues/16)
 
 # 内容
 
-- [x] Lint
-- [x] Reviewdog
-- [x] CIとLint
-- [x] CIとLintとReviewdog
+- [x] 通知
