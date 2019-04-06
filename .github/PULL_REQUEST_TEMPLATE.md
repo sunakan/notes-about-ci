@@ -2,7 +2,7 @@
 
 # 内容
 
-- [ ] Lint
+- [x] Lint
 - [ ] Reviewdog
 - [ ] CIとLint
 - [ ] CIとLintとReviewdog
