@@ -115,12 +115,25 @@ commands:
               -H "Content-Type:application/json" \
               -d @/tmp/pullreq.update.json
             done
+  textlint:
+    description: "textlint"
+    steps:
+      - run:
+          name: "g++, make, pythonの有無の確認と無ければインストール"
+          command: (type g++ && type make && type python) || (sudo apt update && apt install -y g++ make python)
+      - run:
+          name: "npm install"
+          command: npm install
+      - run:
+          name: "run textlint"
+          command: node_modules/.bin/textlint *.adoc **/*.adoc
 
 jobs:
   lint:
     executor: node
     steps:
       - checkout
+      - textlint
       - echo-hello:
           message: "[$CIRCLE_BRANCH] lint"
       - echo-hello:
