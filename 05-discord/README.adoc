@@ -1,0 +1,20 @@
+=== curlでDiscordへ通知
+
+* 2.1がまだ対応されていない場合
+* コマンド
++
+----
+$ circleci local execute -c circleci-samples/05-discord/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job feature
+----
+
+* localでやる場合は、環境変数を代入してあげないといけないことに注意
+
+* CircleCIで見たworkflow
+
+link:https://circleci.com/workflow-run/4323386e-5a98-4dd9-888a-6b2db53c98ee[CircleCIでの表示]
+
+* 自分で表現: workflow
+
+:path: fT313SCW30NGkwVe0gZtDegoYXC-19LW1APIjozXXCG7_tzwXxzKvQBjY3GAEIaVUathxC3Q2gRdEfFfHvpLUAYfq9O9sovcHun2IJIudx6XRbBiUn0FzXpIW2o-Y9BlGrNPX-JlGmTNHRdW8DcJEfEM_lfiVm00
+
+image:https://www.plantuml.com/plantuml/svg/{path}.svg[link="http://www.plantuml.com/plantuml/uml/{path}"]

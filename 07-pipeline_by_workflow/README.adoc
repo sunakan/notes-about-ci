@@ -11,3 +11,19 @@ circleci local execute -c circleci-samples/07-pipeline_by_workflow/config-2.0.ym
 ----
 
 * localでやる場合は、環境変数を代入してあげないといけないことに注意
+
+
+* CircleCIで見たworkflow
+
+link:https://circleci.com/workflow-run/8b6b4db5-4ebd-44d5-81e9-c571f5b210ab[CircleCIでの表示]
+
+* 自分で表現: workflow
+
+:path1: LOwn4G8n30HpLK5C0Bb9lWj2ZmREneFUVcG9OXgYAHh1_nd9pSxT1ZTrOpMVXJOWAoRO9R2vudZOVz-VSzDxalOY2bAgdIYersZe5gNasoWe3ON23Cs8b_Q4SiRVo9bBfU1B1wl5nKKK3qTV1TJhwcn0quXnvmS0
+:path2: 7SsnhG8n3CRntbDaW9lWlUQse8m2-GWHJdnod4EKBCHIB8AFnlhhL_XRXoMrsPX-GLQD4J9si6nBS2orboMqD0mQFg_tIVH-PNaG_UdiqJ3itxj12-95TcWgEEGyA-SufDdDNnoIiR4ylT0phNvyzmi0
+
+* feature/.*
++ image:https://www.plantuml.com/plantuml/svg/{path1}.svg[link="http://www.plantuml.com/plantuml/uml/{path1}"]
+
+* develop, staging, master
++ image:https://www.plantuml.com/plantuml/svg/{path2}.svg[link="http://www.plantuml.com/plantuml/uml/{path2}"]

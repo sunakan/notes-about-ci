@@ -1,0 +1,25 @@
+=== Whenを使ったサンプル
+
+* 2.1がまだ対応されていない場合
+* コマンド
++
+----
+$ circleci local execute -c circleci-samples/06-when/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job feature
+$ circleci local execute -c circleci-samples/06-when/config-2.0.yml -e DISCORD_WEBHOOK=$DISCORD_WEBHOOK --job master
+----
+
+* localでやる場合は、環境変数を代入してあげないといけないことに注意
+
+* CircleCIで見たworkflow(job名を間違っていてbuildエラー)
+
+link:https://circleci.com/workflow-run/d4745d3b-827a-45c7-93df-8da55a07086a[CircleCIでの表示]
+
+* 自分で表現: workflow(これがしたかった、configの方は微妙にできてないので注意)
+
+:path1: TS_DIiD050NW_NsABDj5VO1aqpUHjBbjHYO_pDnHbqwkY2A2A6uKoKeKwivDXAeFSyMVjp2Dr4hHpSnm3ip76LgA3RbCG_S0KgGns2f6065Sqc2ADB18hemWn75Q35BKkeX0JO9U6PiuGq9ZDupBDmbtIQkS-W6bc0SzCWxx42xZzWE3smftac8g_bQg1-5Qc8KFnS_UhXhn9n_FS_4lucln-n6WjXZq9d5xzG7pH4rWvVwmBbT4QDVPPToomWTIFIuSlXU-5fvtvfrKC-7JBcIfcj_jD_wVlTeySaedQ_BhquNuOwdEXC-5M-BexobXekouC8duvdFlyhs-YM1HmR0zNAQ_0000
+
+image:https://www.plantuml.com/plantuml/svg/{path1}.svg[link="http://www.plantuml.com/plantuml/uml/{path1}"]
+
+:path2: jP51oW8n38NtEKKlyFFlns6OMxYKb4bBDTDA-weUtrBTYA8Wc4LuV91yYpSNS4PTbNeW1AYORSe7f-bChWMYORIJ4qRDClxRYVxQq3vPCYRNk8DSe25YCCXLxh3604XvXBO6NGRZM8jig7zdpo5smo8dqNHyQ-YddnMTF1iAs8VeVsXOkK3o5u9ENneaBhSMMg2vhLRM5G00
+
+image:https://www.plantuml.com/plantuml/svg/{path2}.svg[link="http://www.plantuml.com/plantuml/uml/{path2}"
