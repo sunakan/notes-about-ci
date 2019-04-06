@@ -115,12 +115,45 @@ commands:
               -H "Content-Type:application/json" \
               -d @/tmp/pullreq.update.json
             done
+  textlint:
+    description: "textlint"
+    parameters:
+      reviewdog_version:
+        type: string
+        default: "0.9.8"
+    steps:
+      - run:
+          name: "g++, make, pythonの有無の確認と無ければインストール"
+          command: (type g++ && type make && type python) || (sudo apt update && apt install -y g++ make python)
+      - run:
+          name: "npm install"
+          command: npm install
+      # 環境変数: REVIEWDOG_GITHUB_API_TOKENが必要
+      - run:
+          name: "run textlint"
+          command: |
+            test ${CI_PULL_REQUEST} || exit 0
+            cond="git diff --name-only --diff-filter=ACMR origin/master | grep -a '.*.adoc$'"
+            if eval $cond >/dev/null; then
+              if ! eval $cond | xargs $(npm bin)/textlint -f pretty-error 1>&2; then
+                mkdir -p ~/bin && export PATH="~/bin/:$PATH"
+                curl -fSL https://github.com/reviewdog/reviewdog/releases/download/<< parameters.reviewdog_version >>/reviewdog_linux_amd64 -o ~/bin/reviewdog
+                chmod +x ~/bin/reviewdog
+                git diff --name-only --diff-filter=ACMR origin/master \
+                | grep -a '.*.adoc$' \
+                | xargs $(npm bin)/textlint -f checkstyle 1>&2 \
+                | reviewdog -f=checkstyle -name="textlint" -ci="circle-ci" 1>&2 || exit 0
+              else
+                echo "lint check is ok"
+              fi
+            fi
 
 jobs:
   lint:
     executor: node
     steps:
       - checkout
+      - textlint
       - echo-hello:
           message: "[$CIRCLE_BRANCH] lint"
       - echo-hello:

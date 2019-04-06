@@ -8,3 +8,30 @@ image:https://circleci.com/gh/sunakan/notes-about-circleci/tree/master.svg?style
 ----
 $ sh circleci-execute.sh
 ----
+
+* 自動化
+** LintによるCodeReview
+** LintによるCodeReviewの結果をReviewdoogでGithubにて指摘
+** テスト
+** テスト結果レポート
+** プルリク
+** プルリクIssueの内容のアップデート
+** デプロイ
+
+* 手動
+** マージ
+** コンフリクトを修正
+** ブランチの削除
+
+== Lint
+
+* 準備
+
+----
+$ docker-compose run --rm app npm init
+$ docker-compose run --rm app npm i --save-dev textlint
+$ docker-compose run --rm app npm i --save-dev textlint-rule-max-ten textlint-rule-spellcheck-tech-word textlint-rule-no-mix-dearu-desumasu
+$ docker-compose run --rm app npm i --save-dev textlint-plugin-asciidoc-loose
+$ vim .textlintrc
+$ docker-compose run --rm app node_modules/.bin/textlint *.adoc **/*.adoc
+----
