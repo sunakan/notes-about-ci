@@ -8,3 +8,17 @@ image:https://circleci.com/gh/sunakan/notes-about-circleci/tree/master.svg?style
 ----
 $ sh circleci-execute.sh
 ----
+
+* 自動化
+** LintによるCodeReview
+** LintによるCodeReviewの結果をReviewdoogでGithubにて指摘
+** テスト
+** テスト結果レポート
+** プルリク
+** プルリクIssueの内容のアップデート
+** デプロイ
+
+* 手動
+** マージ
+** コンフリクトを修正
+** ブランチの削除
