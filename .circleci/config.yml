@@ -142,7 +142,7 @@ commands:
             test ${CI_PULL_REQUEST} || exit 0
             cond="git diff --name-only --diff-filter=ACMR origin/master | grep -a '.*.adoc$'"
             if eval $cond >/dev/null; then
-              if ! eval $cond | xargs $(npm bin)/textlint -f pretty-error 1>&2 >> ./lint-result; then
+              if ! eval $cond | xargs $(npm bin)/textlint --no-color 1>&2 >> ./lint-result; then
                 mkdir -p ~/bin && export PATH="~/bin/:$PATH"
                 curl -fSL https://github.com/reviewdog/reviewdog/releases/download/<< parameters.reviewdog_version >>/reviewdog_linux_amd64 -o ~/bin/reviewdog
                 chmod +x ~/bin/reviewdog
