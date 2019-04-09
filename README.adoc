@@ -35,3 +35,11 @@ $ docker-compose run --rm app npm i --save-dev textlint-plugin-asciidoc-loose
 $ vim .textlintrc
 $ docker-compose run --rm app node_modules/.bin/textlint *.adoc **/*.adoc
 ----
+
+* 追加
+
+----
+$ docker-compose run --rm app npm i --save-dev textlint-rule-prh
+$ docker-compose run --rm app npm i --save-dev textlint-rule-preset-ja-spacing
+$ docker-compose run --rm app npm i --save-dev textlint-rule-preset-jtf-style
+----
