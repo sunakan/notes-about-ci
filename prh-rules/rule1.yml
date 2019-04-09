@@ -1,0 +1,15 @@
+---
+version: 1
+rules:
+# expectedのみだと 大文字小文字全角半角の統一 されてるかをチェックできる
+  - expected: jQuery
+    specs:
+      - from: jquery
+        to:   jQuery
+      - from: ＪＱＵＥＲＹ
+        to:   jQuery
+# patternにマッチするものはexpecetedが本来の表現であるというルール
+# ディフォルト => デフォルト
+# 表現の統一を図る
+  - expected: デフォルト
+    pattern:  ディフォルト

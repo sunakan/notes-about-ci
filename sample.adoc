@@ -15,3 +15,5 @@
 * aws,AWS
 * GCE,gce
 * Crystal,crystal
+* ディフォルト
+ディフォルト
