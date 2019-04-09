@@ -1,5 +1,5 @@
-# Story: [Lintの結果をDiscordへ通知](https://github.com/sunakan/notes-about-ci/issues/16)
+# Story: [prhの導入](https://github.com/sunakan/notes-about-ci/issues/20)
 
 # 内容
 
-- [x] 通知
+- [x] 適当に追加
